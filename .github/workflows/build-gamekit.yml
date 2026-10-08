@@ -25,7 +25,7 @@ jobs:
           npm --version
 
       - name: Build Apple.Core + Apple.GameKit for iOS
-        run: python3 build.py -p Core GameKit -m iOS -bc Release -nc
+        run: python3 build.py -p Core GameKit -m iOS macOS -bc Release -nc < /dev/null
 
       - name: List output
         run: ls -lh Build/
