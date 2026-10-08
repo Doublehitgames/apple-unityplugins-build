@@ -1,0 +1,38 @@
+name: build-apple-unity-plugins
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Tag/branch of apple/unityplugins to build"
+        default: "27.0"
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout apple/unityplugins
+        uses: actions/checkout@v4
+        with:
+          repository: apple/unityplugins
+          ref: ${{ inputs.ref }}
+
+      - name: Show toolchain
+        run: |
+          sw_vers
+          xcodebuild -version
+          python3 --version
+          npm --version
+
+      - name: Build Apple.Core + Apple.GameKit for iOS
+        run: python3 build.py -p Core GameKit -m iOS -bc Release -nc
+
+      - name: List output
+        run: ls -lh Build/
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: apple-unity-plugins-gamekit
+          path: Build/*.tgz
+          if-no-files-found: error
